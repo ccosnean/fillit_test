@@ -16,7 +16,7 @@
 #include <fcntl.h>
 
 
-void	ft_save_tetrimino(char	*str, t_list *h);
+t_list	*ft_save_tetrimino(char	*str, t_list *h);
 void	ft_print_list(t_list *h);
 
 void	ft_putchar(char c)
@@ -114,7 +114,7 @@ void	ft_check(char *str)
 }
 
 
-void	ft_start_check(char *str, t_list *h)
+t_list	*ft_start_check(char *str, t_list *h)
 {
 	int		i;
 	char	m[21];
@@ -128,13 +128,13 @@ void	ft_start_check(char *str, t_list *h)
 		if (i == 21)
 		{
 			ft_check(m);
-			ft_save_tetrimino(m, h);
+			h = ft_save_tetrimino(m, h);
 			i = 0;
 		}
 	}
 	if (i != 0)
 		ft_error(0);
-	return ;
+	return (h);
 }
 
 int		ft_check_spaces(char *str)
@@ -156,7 +156,7 @@ int		ft_check_spaces(char *str)
 	return (1);
 }
 
-void	ft_make_map(char *map, int i, t_list *h)
+t_list	*ft_make_map(char *map, int i, t_list *h)
 {
 	int	k;
 
@@ -171,13 +171,13 @@ void	ft_make_map(char *map, int i, t_list *h)
 	map[i + 2] = '\n';
 	map[i + 3] = '\0';
 	if (ft_check_spaces(map))
-		ft_start_check(map, h);
+		h = ft_start_check(map, h);
 	else
 		ft_error(0);
-	return ;
+	return (h);
 }
 
-void	ft_save_tetrimino(char *str, t_list *h) //debug from here...
+t_list	*ft_save_tetrimino(char *str, t_list *h) //debug from here...
 {
 	int		i;
 	int		k;
@@ -185,12 +185,12 @@ void	ft_save_tetrimino(char *str, t_list *h) //debug from here...
 	char 	pos[3];
 
 	i = 0;
-	k = 0;
+	k = -1;
 	while (str[i])
 	{
 		if (str[i] == '#')
 		{
-			if (k > 0)
+			if (k >= 0)
 				pos[k] = i - op;
 			else
 				op = i;
@@ -199,7 +199,7 @@ void	ft_save_tetrimino(char *str, t_list *h) //debug from here...
 		i++;
 	}
 	lst_add(&h, &pos[0]);
-	return ;
+	return (h);
 }
 
 unsigned int	ft_count_tetri(t_list *h)
@@ -215,13 +215,21 @@ unsigned int	ft_count_tetri(t_list *h)
 	return (len < 4 ? ft_sqrt(len * 4) + 1 : ft_sqrt(len * 4));
 }
 
+void	ft_print_list(t_list *h)
+{
+	while (h)
+	{
+		printf("\n%i, %i, %i\n", h->x[0], h->x[1], h->x[2]);
+		h = h->next;
+	}
+}
+
 int 	main(int argc, char **argv)
 {
 	char	c[200];
 	char	f;
 	t_list	*ap = NULL;
 	char	*s;
-	//char	poz[3];
 	char	m;
 	char	n;
 	char	k;
@@ -235,8 +243,9 @@ int 	main(int argc, char **argv)
 	i = 0;
 	while (read(f, &cr, 1) != 0)
 		mr[i++] = cr;
-	ft_make_map(mr, i, ap);
+	ap = ft_make_map(mr, i, ap);
 
+	ft_print_list(ap);
 
 	s = &c[0];
 	i = 0;
@@ -262,7 +271,6 @@ int 	main(int argc, char **argv)
 		k = 5;
 		printf("%s\n", "N");
 	}
-	
 	del_lst(&ap);
 	return (0);
 }

@@ -15,7 +15,7 @@
 int		ft_is_valid(char *c)
 {
 	if (*c != '.' && *c != '#' && *c != '\n')
-		return (0);
+		ft_error(0);
 	if (*c == '.')
 		return (1);
 	if (*c == '\n' || *c == '\0')
